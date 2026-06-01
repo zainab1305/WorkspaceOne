@@ -20,7 +20,25 @@ const MessageSchema = new mongoose.Schema(
       required: true,
     },
     senderName: { type: String, required: true },
-    message: { type: String, required: true, trim: true },
+    message: {
+      type: String,
+      trim: true,
+      default: "",
+      required: function required() {
+        return this.messageType !== "audio";
+      },
+    },
+    messageType: {
+      type: String,
+      enum: ["text", "audio"],
+      default: "text",
+      index: true,
+    },
+    audioPath: { type: String, default: "" },
+    audioFileName: { type: String, default: "" },
+    audioMimeType: { type: String, default: "" },
+    audioSizeBytes: { type: Number, default: 0 },
+    audioDurationSeconds: { type: Number, default: 0 },
     type: {
       type: String,
       enum: ["message", "announcement"],

@@ -6,6 +6,7 @@ import Room from "@/models/Room";
 import Message from "@/models/Message";
 import { getRoomAccess } from "@/lib/roomRoles";
 import { buildNotificationLink, createRoomNotifications } from "@/lib/notifications";
+import { signAudioMessage } from "@/lib/messageMedia";
 
 async function getUserAndRoom(session, roomId) {
   return getRoomAccess(session, roomId);
@@ -28,10 +29,12 @@ export async function GET(_, { params }) {
 
     const messages = await Message.find({ roomId })
       .sort({ createdAt: 1 })
-      .select("senderId senderName message type isPinned pinnedAt replyTo time createdAt")
+      .select("senderId senderName message messageType audioPath audioFileName audioMimeType audioSizeBytes audioDurationSeconds type isPinned pinnedAt replyTo time createdAt")
       .lean();
 
-    return NextResponse.json({ messages }, { status: 200 });
+    const serializedMessages = await Promise.all(messages.map((item) => signAudioMessage({ ...item, roomId })));
+
+    return NextResponse.json({ messages: serializedMessages }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -77,6 +80,7 @@ export async function POST(req, { params }) {
       senderId: access.user._id,
       senderName: access.user.name || access.user.email,
       message: message.trim(),
+      messageType: "text",
       type: "message",
       isPinned: false,
       pinnedAt: null,

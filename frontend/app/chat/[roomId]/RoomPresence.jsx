@@ -2,13 +2,19 @@
 
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { socket } from "@/lib/socket";
 
 export default function RoomPresence({ roomId }) {
   const { data: session } = useSession();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!roomId || !session?.user?.id) return;
+
+    if (pathname === `/chat/${roomId}/chat`) {
+      return undefined;
+    }
 
     if (!socket.connected) {
       socket.connect();
@@ -27,7 +33,7 @@ export default function RoomPresence({ roomId }) {
     return () => {
       socket.emit("leaveRoom", { roomId });
     };
-  }, [roomId, session?.user?.email, session?.user?.id, session?.user?.name]);
+  }, [pathname, roomId, session?.user?.email, session?.user?.id, session?.user?.name]);
 
   return null;
 }

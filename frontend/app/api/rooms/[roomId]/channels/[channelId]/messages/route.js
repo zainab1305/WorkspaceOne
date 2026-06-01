@@ -7,6 +7,7 @@ import Message from "@/models/Message";
 import Room from "@/models/Room";
 import { getRoomAccess } from "@/lib/roomRoles";
 import { buildNotificationLink, createRoomNotifications } from "@/lib/notifications";
+import { signAudioMessage, toVoiceMessageLabel } from "@/lib/messageMedia";
 
 /**
  * GET /api/rooms/[roomId]/channels/[channelId]/messages
@@ -36,10 +37,12 @@ export async function GET(_, { params }) {
 
     const messages = await Message.find({ roomId, channelId })
       .sort({ createdAt: 1 })
-      .select("senderId senderName message type isPinned pinnedAt replyTo time createdAt channelId")
+      .select("senderId senderName message messageType audioPath audioFileName audioMimeType audioSizeBytes audioDurationSeconds type isPinned pinnedAt replyTo time createdAt channelId")
       .lean();
 
-    return NextResponse.json({ messages }, { status: 200 });
+    const serializedMessages = await Promise.all(messages.map((item) => signAudioMessage({ ...item, roomId })));
+
+    return NextResponse.json({ messages: serializedMessages }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -95,6 +98,7 @@ export async function POST(req, { params }) {
       senderId: access.user._id,
       senderName: access.user.name || access.user.email,
       message: String(message).trim(),
+      messageType: "text",
       type: "message",
       isPinned: false,
       pinnedAt: null,
@@ -132,6 +136,7 @@ export async function POST(req, { params }) {
           ...createdMessage,
           _id: createdMessage._id.toString(),
           channelId: channelId,
+          message: toVoiceMessageLabel(createdMessage),
         },
       },
       { status: 201 }

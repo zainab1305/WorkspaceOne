@@ -400,6 +400,14 @@ export default function DashboardClient() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  // Clear any pending toast timeout on unmount to prevent state updates after unmount
+  useEffect(() => {
+    return () => {
+      window.clearTimeout(showToast.timeoutId);
+      showToast.timeoutId = null;
+    };
+  }, []);
+
   useEffect(() => {
     fetchRoomInsights(rooms);
   }, [rooms]);

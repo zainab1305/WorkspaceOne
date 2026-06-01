@@ -86,32 +86,7 @@ export default function MembersClient({ roomId }) {
     socket.on("roleUpdated", onRoleUpdated);
     socket.on("userRemoved", onUserRemoved);
 
-    socket.emit(
-      "joinRoom",
-      {
-        roomId,
-        user: {
-          id: session.user.id || session.user.email,
-          name: session.user.name,
-          email: session.user.email,
-        },
-      },
-      (snapshot) => {
-        if (snapshot?.roomId === roomId) {
-          setOnlineTokens(
-            (snapshot.users || [])
-              .flatMap((user) => [
-                user?.id ? String(user.id).toLowerCase() : "",
-                user?.email ? String(user.email).toLowerCase() : "",
-              ])
-              .filter(Boolean)
-          );
-        }
-      }
-    );
-
     return () => {
-      socket.emit("leaveRoom", { roomId });
       socket.off("roomUsers", onRoomUsers);
       socket.off("roleUpdated", onRoleUpdated);
       socket.off("userRemoved", onUserRemoved);
