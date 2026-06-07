@@ -354,35 +354,9 @@ sequenceDiagram
 
 To be verified: Supabase bucket policies and production OAuth callback URLs are not represented by checked-in configuration files.
 
-## Future Improvements
-
-- Add `start` and `dev` scripts to `backend/package.json`.
-- Add automated tests for auth, room roles, message persistence, and voice-message upload/playback.
-- Add checked-in deployment examples such as `vercel.json`, `render.yaml`, or documented dashboard screenshots.
-- Add rate limiting for auth, room joining, message creation, and uploads.
-- Add file-size and duration limits for voice messages.
-- Add Socket.IO authentication middleware tied to NextAuth sessions.
-- Add optimistic UI reconciliation for message send failures.
-- Add structured API documentation with request/response examples.
-- Add CI for linting and production build validation.
-
-## Screenshots
-
-> Screenshots are placeholders and should be replaced with current production UI captures.
-
-| Dashboard | Room Chat |
-| --- | --- |
-| `docs/screenshots/dashboard.png` | `docs/screenshots/room-chat.png` |
-
-| Members | Voice Message |
-| --- | --- |
-| `docs/screenshots/members.png` | `docs/screenshots/voice-message.png` |
-
 ## Author
 
 **Zainab Jambughodawala**  
-B.Tech Computer Science and Design  
-IEEE Secretary | Full Stack Developer
 
 ## License
 
