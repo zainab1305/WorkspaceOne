@@ -233,24 +233,6 @@ Open `http://localhost:3000`.
 | `frontend` | `npm run lint` | Run ESLint |
 | `backend` | `npm test` | Placeholder script that exits with an error |
 
-## Deployment
-
-No checked-in `vercel.json`, `render.yaml`, Dockerfile, or Procfile was found during inspection. The following reflects the architecture supported by the codebase and should be verified against the hosting dashboards.
-
-### Frontend (Vercel)
-
-- Deploy the `frontend` directory as the Vercel project root.
-- Configure all frontend/API environment variables in Vercel.
-- Set `NEXT_PUBLIC_SOCKET_SERVER_URL` to the deployed Render Socket.IO server URL.
-- Ensure `MONGODB_URI`, `NEXTAUTH_SECRET`, Google OAuth credentials, Supabase credentials, and `SOCKET_SERVER_SECRET` are configured.
-
-### Socket Server (Render)
-
-- Deploy the `backend` directory as a Node.js web service.
-- Start command: `node server.js`.
-- Configure `CLIENT_URL` with the deployed Vercel frontend origin.
-- Configure `SOCKET_SERVER_SECRET` to match the value used by the frontend/API routes if protected server-to-server notification and presence endpoints are desired.
-- Render should provide `PORT`; the server also falls back to `5000` locally.
 
 ## Voice Message Flow
 
